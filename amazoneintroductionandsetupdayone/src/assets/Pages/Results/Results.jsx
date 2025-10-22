@@ -8,22 +8,25 @@ import classes from './results.module.css';
 
 function Results() {
     const [results, setResults] = useState([]);
+    const [isLoading, setIsLoading] = useState(false); // fixed initialization
     const { categoryName } = useParams();
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setIsLoading(true); // start loading
             try {
-                // Encode the category for the URL to handle spaces and apostrophes
                 const encodedCategory = encodeURIComponent(categoryName);
                 const res = await axios.get(`${productUrl}/products/category/${encodedCategory}`);
                 setResults(res.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
+            } finally {
+                setIsLoading(false); // stop loading
             }
         };
 
         fetchProducts();
-    }, [categoryName]); // Re-fetch if the category changes
+    }, [categoryName]);
 
     return (
         <LayOut>
@@ -32,7 +35,9 @@ function Results() {
                 <p style={{ padding: "30px" }}>Category / {categoryName}</p>
                 <hr />
                 <div className={classes.products_container}>
-                    {results.length > 0 ? (
+                    {isLoading ? (
+                        <p style={{ padding: "30px" }}>Loading products...</p>
+                    ) : results.length > 0 ? (
                         results.map((product) => (
                             <ProductCard
                                 key={product.id}
@@ -40,7 +45,7 @@ function Results() {
                             />
                         ))
                     ) : (
-                        <p style={{ padding: "30px" }}></p>
+                        <p style={{ padding: "30px" }}>No products found.</p>
                     )}
                 </div>
             </section>
