@@ -1,32 +1,38 @@
-import React from 'react'
-import Rating from '@mui/material/Rating'
-import CurrencyFormat from '../CurrencyFormat/CurrencyFormat'
+import React from 'react';
+import Rating from '@mui/material/Rating';
+import CurrencyFormat from '../CurrencyFormat/CurrencyFormat';
 import classes from "./Product.module.css";
-import { fabClasses } from '@mui/material/Fab';
+import { Link } from 'react-router-dom';
+
 function ProductCard({ product }) {
-    const {image, title, id, rating, price}=product;
-  return (
-    <div className={classes.card__container}>
-        <a href="">
-            <img src={image} alt="" />
-        </a>
-        <div>
-            <h3> {title}</h3>
-            <div className={classes.rating}>
-                <Rating value={rating?.rate ?? "No rating"} precision={0.1}/>
-                {/*count*/}
-                <small>{rating?.count ??"N/A"}</small>
-            </div>
+    // If product is undefined or null, render nothing
+    if (!product) return null;
+
+    const { image, title, id, rating, price } = product;
+
+    // If essential fields are missing, render nothing
+    if (!id || !title || !image) return null;
+
+    return (
+        <div className={classes.card__container}>
+            <Link to={`/products/${id}`}>
+                <img src={image} alt={title} />
+            </Link>
             <div>
-                   {/*price*/}
-                   <CurrencyFormat amount={price}/>
+                <h3>{title}</h3>
+                <div className={classes.rating}>
+                    <Rating value={rating?.rate ?? 0} precision={0.1} readOnly />
+                    <small>{rating?.count ?? "N/A"}</small>
+                </div>
+                <div>
+                    <CurrencyFormat amount={price} />
+                </div>
+                <button className={classes.button}>
+                    add to cart
+                </button>
             </div>
-            <button className={classes.button}>
-                add to start
-            </button>
         </div>
-    </div>
-  )
+    );
 }
 
-export default ProductCard
+export default ProductCard;

@@ -18,7 +18,7 @@ function Routing() {
         <Route path='/orders' element={<Orders/>}/>
         <Route path='/category/:categoryName' element={<Results/>}/>
         <Route path='/cart' element={<Cart/>}/>
-        <Route path='/productdetail' element={<ProductDetail/>}/>
+        <Route path='/products/:productId' element={<ProductDetail/>}/>
       </Routes>
     </Router>
 
