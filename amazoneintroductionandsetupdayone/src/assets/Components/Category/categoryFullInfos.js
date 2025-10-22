@@ -11,12 +11,11 @@ export const categoryInfos = [{
     {
         title: "Men's Clothing",
         name: "men's clothing",
-        imgLink: "/src/assets/images/men's.jpg",
+        imgLink: "/images/men's.jpg",
     },
     {
         title: "Jewelry",
         name: "jewelery",
-        imgLink: "/src/assets/images/jew.jpg",
+        imgLink: "/images/jew.jpg",
     },
-
 ];
