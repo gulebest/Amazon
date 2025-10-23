@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import LowerHeader from './LowerHeader';
 import { FaSearch } from "react-icons/fa";
 import { SlLocationPin } from "react-icons/sl";
 import { BiCart } from "react-icons/bi";
 import { Link } from 'react-router-dom';
 import classes from "./Header.module.css";
+import { DataContext } from '../DataProvider/DataProvider';
 
 const Header = () => {
+  const { state, dispatch } = useContext(DataContext); 
+  const { basket } = state; 
+  
   return (
     <section>
       <section>
@@ -23,70 +27,55 @@ const Header = () => {
               </Link>
             </div>
             
-
             {/* delivery */}
             <div className={classes.delivery}>
               <span>
                <SlLocationPin />
               </span>
               <div>
-              <p>Delivered to</p>
-               <span> Ethiopia
-              </span>
+                <p>Delivered to</p>
+                <span> Ethiopia</span>
               </div>
             </div>
-            </div>
+          </div>
 
-            {/* search icon */}
-            <div className={classes.search}>
-              <select name='' id=''>
-                <option value=''>All</option>
-              </select>
-              <input type='text' />
-             <FaSearch size={25}/>
-            </div>
-          
+          {/* search icon */}
+          <div className={classes.search}>
+            <select name='' id=''>
+              <option value=''>All</option>
+            </select>
+            <input type='text' />
+            <FaSearch size={25}/>
+          </div>
 
           {/* right side link */}
-        <div className={classes.order__container}>
-            
-              <Link to='/' className={classes.language}>
-                <img src="https://www.shutterstock.com/shutterstock/photos/2456548071/display_1500/stock-photo-usa-flag-covering-the-frame-is-waving-in-the-wind-2456548071.jpg" alt="flag" />
-              
+          <div className={classes.order__container}>
+            <Link to='/' className={classes.language}>
+              <img src="https://www.shutterstock.com/shutterstock/photos/2456548071/display_1500/stock-photo-usa-flag-covering-the-frame-is-waving-in-the-wind-2456548071.jpg" alt="flag" />
               <select name='' id=''>
                <option value=''>EN</option>
               </select>
-                </Link>
+            </Link>
 
+            {/* sign in */}
+            <Link to='/auth'>
+              <p>Sign In</p>
+              <span>Account & List</span>
+            </Link>
 
-            {/* three components */}
-            
-              {/* sign in */}
-          
-                <Link to='/auth'>
-                  <p>Sign In</p>
-                  <span>Account & List</span>
-                </Link>
-              
+            {/* orders */}
+            <Link to='/orders'>
+              <p>returns</p>
+              <span>& Orders</span>
+            </Link>
 
-              {/* orders */}
-             
-                <Link to='/orders'>
-                  <p>returns</p>
-                  <span>& Orders</span>
-                </Link>
-              
-
-              {/* cart */}
-              
-                <Link to='/cart' className={classes.cart}>
-                  <BiCart size={35}/>
-                  <span>0</span>
-                </Link>
-              
-            </div>
+            {/* cart */}
+            <Link to='/cart' className={classes.cart}>
+              <BiCart size={35}/>
+              <span>{basket.length}</span>
+            </Link>
           </div>
-        
+        </div>
       </section>
       <LowerHeader/>
     </section>
