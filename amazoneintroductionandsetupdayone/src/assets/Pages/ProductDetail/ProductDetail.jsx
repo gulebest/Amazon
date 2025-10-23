@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { productUrl } from '../../../Api/endPoints';
 import ProductCard from '../../Components/Product/ProductCard';
-import Loader from '../../Components/Loader/Loader'; // ✅ IMPORT ADDED
+import Loader from '../../Components/Loader/Loader';
 
 function ProductDetail() {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +27,13 @@ function ProductDetail() {
 
   return (
     <LayOut>
-      {isLoading ? <Loader /> : <ProductCard product={product} />}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className={classes.detail__page}>
+          <ProductCard product={product} flex={true} />
+        </div>
+      )}
     </LayOut>
   );
 }
