@@ -31,7 +31,11 @@ function ProductDetail() {
         <Loader />
       ) : (
         <div className={classes.detail__page}>
-          <ProductCard product={product} flex={true} />
+          <ProductCard 
+          product={product}
+          renderDesc={true} 
+          renderAdd={true}
+          flex={true} />
         </div>
       )}
     </LayOut>

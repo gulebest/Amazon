@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { DataContext } from '../DataProvider/DataProvider';
 import { Type } from '../../../Utility/action.type';
 
-function ProductCard({ product, flex }) {
+function ProductCard({ product, flex,renderDesc,renderAdd}) {
   // Return nothing if product is undefined
   if (!product) return null;
 
@@ -55,9 +55,12 @@ function ProductCard({ product, flex }) {
           </p>
         )}
 
-        <button className={classes.button} onClick={addToCart}>
+        {
+          renderAdd && <button className={classes.button} onClick={addToCart}>
           Add to cart
         </button>
+        }
+
       </div>
     </div>
   );
