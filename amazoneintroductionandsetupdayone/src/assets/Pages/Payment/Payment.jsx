@@ -1,7 +1,7 @@
 import React from 'react'
 import classes from './payement.module.css'
 import LayOut from '../../Components/LayOut/LayOut'
-function Payement() {
+function Payment() {
   return (
    <LayOut>
     <div>Payement</div>
@@ -9,4 +9,4 @@ function Payement() {
   )
 }
 
-export default Payement
+export default Payment
