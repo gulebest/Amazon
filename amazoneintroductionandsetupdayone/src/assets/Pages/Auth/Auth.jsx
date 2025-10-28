@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import classes from './auth.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../../../Utility/firebase';
+import {ClipLoader} from 'react-spinners'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { DataContext } from '../../Components/DataProvider/DataProvider';
 import { Type } from '../../../Utility/action.type';
@@ -10,9 +11,13 @@ function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading]=useState({
+    signIn:false,
+    signUp:false
+  })
 
-  // ✅ Correct context usage
   const { state, dispatch } = useContext(DataContext);
+  const navigate= useNavigate();
   const { user } = state;
 
   console.log('Current user:', user);
@@ -23,21 +28,28 @@ function Auth() {
 
     try {
       if (actionType === 'signin') {
+        setLoading({...loading, signIn:true})
         const userInfo = await signInWithEmailAndPassword(auth, email, password);
         dispatch({
           type: Type.SET_USER,
           user: userInfo.user,
         });
+        setLoading({...loading, signIn:false})
+        navigate("/")
       } else if (actionType === 'signup') {
+        setLoading({...loading, signUp:true})
         const userInfo = await createUserWithEmailAndPassword(auth, email, password);
         dispatch({
           type: Type.SET_USER,
           user: userInfo.user,
         });
+        setLoading({...loading, signUp:false})
+        navigate("/")
       }
       setError(''); // clear any previous error
     } catch (err) {
       setError(err.message);
+      setLoading({...loading, signUp:false})
     }
   };
 
@@ -83,8 +95,11 @@ function Auth() {
             onClick={authHandler}
             name="signin"
             className={classes.login_signInButton}
-          >
-            Sign In
+          >{
+            loading.signIn ? (<ClipLoader  color='#000' size={15}></ClipLoader>):
+           (" Sign In"
+
+           )}
           </button>
 
           <p>
@@ -97,8 +112,12 @@ function Auth() {
             onClick={authHandler}
             name="signup"
             className={classes.login_registerButn}
-          >
-            Create Your Amazon Account
+            >
+              {
+            loading.signUp ? (<ClipLoader  color='#000' size={15}></ClipLoader>):
+           (" Create Your Amazon Account"
+            
+           )}
           </button>
 
           {/* ✅ Single Error Message - Only at the bottom */}
