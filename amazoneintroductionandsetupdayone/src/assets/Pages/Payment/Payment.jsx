@@ -5,94 +5,102 @@ import { DataContext } from "../../Components/DataProvider/DataProvider";
 import ProductCard from '../../Components/Product/ProductCard';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import CurrencyFormat from "../../Components/CurrencyFormat/CurrencyFormat";
-import { axiosInstance } from "../../../Api/axios"; 
+import { axiosInstance } from "../../../../src/Api/axios"; 
 import ClipLoader from "react-spinners/ClipLoader";
+
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../../Utility/firebase";
+import { useNavigate } from "react-router-dom";
 
 function Payment() {
   const { state } = useContext(DataContext);
   const { user, basket } = state;
 
-  const totalItem = basket?.reduce((amount, item) => {
-    return item.amount + amount;
-  }, 0) || 0;
-
-  const total = basket.reduce(
-    (amount, item) => item.price * item.amount + amount,
-    0
-  );
+  const totalItem = basket?.reduce((amount, item) => item.amount + amount, 0) || 0;
+  const total = basket.reduce((amount, item) => item.price * item.amount + amount, 0);
 
   const [cardError, setCardError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
   const stripe = useStripe();
   const elements = useElements();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    e?.error?.message ? setCardError(e?.error?.message) : setCardError("");
+    setCardError(e?.error?.message || "");
   };
 
   const handlePayment = async (e) => {
     e.preventDefault();
 
+    if (!stripe || !elements) {
+      setCardError("Stripe has not loaded yet.");
+      return;
+    }
+
+    if (!user) {
+      setCardError("User not logged in.");
+      return;
+    }
+
+    if (total <= 0) {
+      setCardError("Basket is empty or total is invalid.");
+      return;
+    }
+
     try {
       setProcessing(true);
-      // 1. Backend or function: contact to the client secret
-      const response = await axiosInstance({
-        method: "POST",
-        url: `/payment/create?total=${total * 100}`,
-         responseType: "json",
-      });
-      console.log("Response from backend:", response);
+
+      // Convert total to cents (integer)
+      const amountInCents = Math.round(total * 100);
+
+      // Create payment intent via backend (Firebase function)
+      const response = await axiosInstance.post(`/payment/create?total=${amountInCents}`);
+
       const clientSecret = response.data?.clientSecret;
-       console.log("Client secret:", clientSecret);
+      if (!clientSecret) throw new Error("Failed to get client secret");
 
-      // 2. React side confirmation
-      const { paymentIntent } = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: elements.getElement(CardElement)
-          },
-        }
-      );
-      console.log("PaymentIntent:", paymentIntent);
+      // Confirm payment with Stripe.js
+      const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        },
+      });
 
+      if (error) {
+        setCardError(error.message);
+        setProcessing(false);
+        return;
+      }
 
-
-      // 3. after the confirmation ---> order firebase database save, clear basket
-      await db 
-      .collection("users")
-      .doc(users.uid)
-      .collection("orders")
-      .doc(paymentIntent.id)
-      .set({
-        basket:basket,
-        amount:paymentIntent.amount,
-        created:paymentIntent.created,
-      })
+      // Save order details to Firestore
+      await setDoc(doc(db, "users", user.uid, "orders", paymentIntent.id), {
+        basket,
+        amount: paymentIntent.amount,
+        created: paymentIntent.created,
+      });
 
       setProcessing(false);
+      navigate("/orders", { state: { msg: "You have placed a new order" } });
+
     } catch (error) {
-      console.log(error);
+      console.error("Payment error:", error);
+      setCardError(error?.response?.data?.error || error.message || "Payment failed");
       setProcessing(false);
     }
   };
 
   return (
     <LayOut>
-      {/* Header */}
       <div className={classes.payment_header}>
         Checkout ({totalItem || 0}) items
       </div>
 
-      {/* Payment method */}
       <section className={classes.payment}>
-        {/* Address */}
         <div className={classes.flex}>
           <h3>Delivery Address</h3>
           <div>
-            <div>{user?.email}</div>
+            <div>{user?.email || "Guest"}</div>
             <div>123 React Lane</div>
             <div>Chicago, IL</div>
           </div>
@@ -100,7 +108,6 @@ function Payment() {
 
         <hr />
 
-        {/* Product */}
         <div className={classes.flex}>
           <h3>Review items and delivery</h3>
           <div>
@@ -112,26 +119,22 @@ function Payment() {
 
         <hr />
 
-        {/* Card form */}
         <div className={classes.flex}>
           <h3>Payment methods</h3>
           <div className={classes.payment_card_container}>
             <div className={classes.payment_details}>
               <form onSubmit={handlePayment}>
-                {/* error */}
-                {cardError && <small style={{ color: "red" }}> {cardError} </small>}
+                {cardError && <small style={{ color: "red" }}>{cardError}</small>}
 
-                {/* card element */}
                 <CardElement onChange={handleChange} />
 
-                {/* price */}
                 <div className={classes.payment_price}>
                   <div>
                     <span>
                       <p>Total Order |</p><CurrencyFormat amount={total} />
                     </span>
                   </div>
-                  <button type="submit">
+                  <button type="submit" disabled={processing || !stripe || !elements}>
                     {processing ? (
                       <div className={classes.loading}>
                         <ClipLoader color="gray" size={12} />
