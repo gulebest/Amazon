@@ -1,18 +1,21 @@
-export const categoryInfos = [{
+export const categoryInfos = [
+
+    {
+        title: "Men's Clothing",
+        name: "men's clothing",
+        imgLink: "https://img.mensxp.com/media/content/2016/Dec/best-online-shopping-sites-for-men-652x400-6-1481709743.jpg",
+    },
+    {
         title: "Electronics",
         name: "electronics",
-        imgLink: "https://images-na.ssl-images-amazon.com/images/G/01/AmazonExports/Fuji/2020/May/Dashboard/Fuji_Dash_TV_2X._SY304_CB432517900_.jpg"
+        imgLink: "https://pics.computerbase.de/1/0/1/5/9/4-2cb83f073235e9bd/article-1280x720.9ddb0478.jpg"
     },
     {
         title: "Discover fashion trends",
         name: "women's clothing",
         imgLink: "https://www.hindustantimes.com/ht-img/img/2023/10/31/550x309/amazon_sale_2023_kurta_dress_trousers_pants_1698737118863_1698737161140.jpg",
     },
-    {
-        title: "Men's Clothing",
-        name: "men's clothing",
-        imgLink: "https://img.mensxp.com/media/content/2016/Dec/best-online-shopping-sites-for-men-652x400-6-1481709743.jpg",
-    },
+
     {
         title: "Jewelry",
         name: "jewelery",
