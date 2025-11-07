@@ -20,7 +20,7 @@ function Auth() {
   const navigate= useNavigate();
   const { user } = state;
   const navStateData=useLocation();
-  console.log(navStateData);
+  
 
   const authHandler = async (e) => {
     e.preventDefault();

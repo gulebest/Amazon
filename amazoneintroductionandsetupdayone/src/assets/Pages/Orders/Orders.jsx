@@ -2,47 +2,35 @@ import React, { useContext, useState, useEffect } from 'react';
 import classes from './orders.module.css';
 import LayOut from '../../Components/LayOut/LayOut';
 import { DataContext } from '../../Components/DataProvider/DataProvider';
-
-import {
-  collection,
-  query,
-  orderBy,
-  getDocs,
-} from 'firebase/firestore';
-
-// Adjust this import path based on your folder structure
 import { db } from '../../../Utility/firebase';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import ProductCard from '../../Components/Product/ProductCard';
 
 function Orders() {
-  const { state } = useContext(DataContext);
-  const user = state.user;
-
+  const { state, dispatch } = useContext(DataContext);
+  const { user } = state;
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    if (!user) {
-      setOrders([]);
-      return;
+    if (user) {
+      const ordersRef = collection(db, "users", user.uid, "orders");
+      const q = query(ordersRef, orderBy("created", "desc"));
+      //Empty the basket
+      
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        console.log( snapshot);
+        setOrders(
+          snapshot.docs.map((doc)=>({
+            id:doc.id,
+            data:doc.data()
+          }))
+        );
+       
+      });
+      return () => unsubscribe();
+    }else{
+      setOrders([])
     }
-
-    const fetchOrders = async () => {
-      try {
-        const ordersRef = collection(db, "users", user.uid, "orders");
-        const q = query(ordersRef, orderBy("created", "desc"));
-
-        const querySnapshot = await getDocs(q);
-        const ordersList = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setOrders(ordersList);
-      } catch (error) {
-        console.error("Failed to fetch orders:", error);
-      }
-    };
-
-    fetchOrders();
   }, [user]);
 
   return (
@@ -50,29 +38,38 @@ function Orders() {
       <section className={classes.container}>
         <div className={classes.orders_container}>
           <h2>Your Orders</h2>
-          {orders.length === 0 ? (
-            <p>No orders found.</p>
-          ) : (
-            <div className={classes.orders_list}>
-              {orders.map((order) => (
-                <div key={order.id} className={classes.order_card}>
-                  <p><strong>Order ID:</strong> {order.id}</p>
-                  <p><strong>Amount:</strong> ${(order.amount / 100).toFixed(2)}</p>
-                  <p><strong>Date:</strong> {new Date(order.created * 1000).toLocaleString()}</p>
-                  <div>
-                    <strong>Items:</strong>
-                    <ul>
-                      {order.basket?.map((item, i) => (
-                        <li key={i}>
-                          {item.title || item.name || 'Product'} — Qty: {item.amount || 1} — ${item.price?.toFixed(2)}
-                        </li>
-                      ))}
-                    </ul>
+          <div style={{padding:"20px"}}>
+          {
+            orders?.length==0 && <div>You don't have orders yet.</div>
+          }
+          </div>
+          <div>{
+            
+             orders?.map((eachOrder, i)=>{
+                return(
+                  <div key={i}>
+                    <hr/>
+                    <p>Order ID:{eachOrder?.id}</p>
+                    {
+                      eachOrder?.data?.basket?.map(order=>(
+                        <ProductCard  
+                        flex={true}
+                        product={order}
+                        key={order.id}
+                        />
+                       
+
+                      ))
+                    }
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                )
+              })
+
+
+
+
+
+            }</div>
         </div>
       </section>
     </LayOut>

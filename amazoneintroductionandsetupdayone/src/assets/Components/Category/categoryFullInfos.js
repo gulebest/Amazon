@@ -6,16 +6,16 @@ export const categoryInfos = [{
     {
         title: "Discover fashion trends",
         name: "women's clothing",
-        imgLink: "https://images-na.ssl-images-amazon.com/images/G/01/softlines/shopbop/ingress/2023/March/mp_20230219_ff_desktopsinglecategory_desktop_379x304_1._SY304_CB616239047_.jpg",
+        imgLink: "https://www.hindustantimes.com/ht-img/img/2023/10/31/550x309/amazon_sale_2023_kurta_dress_trousers_pants_1698737118863_1698737161140.jpg",
     },
     {
         title: "Men's Clothing",
         name: "men's clothing",
-        imgLink: "/images/men's.jpg",
+        imgLink: "https://img.mensxp.com/media/content/2016/Dec/best-online-shopping-sites-for-men-652x400-6-1481709743.jpg",
     },
     {
         title: "Jewelry",
         name: "jewelery",
-        imgLink: "/images/jew.jpg",
+        imgLink: "https://m.media-amazon.com/images/S/aplus-media-library-service-media/95f3a31b-f84c-42e8-aea2-04ebaba6d66d.__CR0,0,970,600_PT0_SX970_V1___.jpg",
     },
 ];
