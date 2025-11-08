@@ -4,7 +4,7 @@ import CurrencyFormat from '../CurrencyFormat/CurrencyFormat';
 import { Link } from 'react-router-dom';
 import { DataContext } from '../DataProvider/DataProvider';
 import { Type } from '../../../Utility/action.type';
-import classes from './ProductCard.module.css';
+import classes from './Product.module.css'
 
 function ProductCard({ product, flex, renderDesc, renderAdd }) {
   if (!product) return null;
