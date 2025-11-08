@@ -1,21 +1,17 @@
 import React, { useContext } from 'react';
 import Rating from '@mui/material/Rating';
 import CurrencyFormat from '../CurrencyFormat/CurrencyFormat';
-import classes from "./Product.module.css";
 import { Link } from 'react-router-dom';
 import { DataContext } from '../DataProvider/DataProvider';
 import { Type } from '../../../Utility/action.type';
+import classes from './ProductCard.module.css';
 
-function ProductCard({ product, flex,renderDesc,renderAdd}) {
-  // Return nothing if product is undefined
+function ProductCard({ product, flex, renderDesc, renderAdd }) {
   if (!product) return null;
 
   const { image, title, id, rating, price, description } = product;
-
-  // ✅ Correct: object destructuring from context
   const { state, dispatch } = useContext(DataContext);
 
-  // Add product to basket
   const addToCart = () => {
     dispatch({
       type: Type.ADD_TO_BASKET,
@@ -23,7 +19,6 @@ function ProductCard({ product, flex,renderDesc,renderAdd}) {
     });
   };
 
-  // Return nothing if essential fields are missing
   if (!id || !title || !image) return null;
 
   return (
@@ -48,19 +43,17 @@ function ProductCard({ product, flex,renderDesc,renderAdd}) {
           <CurrencyFormat amount={price} />
         </div>
 
-        {/* Show description only on detail page */}
         {flex && (
           <p className={classes.description}>
             {description || "No description available."}
           </p>
         )}
 
-        {
-          renderAdd && <button className={classes.button} onClick={addToCart}>
-          Add to cart
-        </button>
-        }
-
+        {renderAdd && (
+          <button className={classes.button} onClick={addToCart}>
+            Add to cart
+          </button>
+        )}
       </div>
     </div>
   );
