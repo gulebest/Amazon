@@ -1,0 +1,8 @@
+.detail__page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 50px 20px;
+    background-color: #f8f8f8;
+    min-height: 80vh;
+}
