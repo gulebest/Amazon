@@ -13,11 +13,11 @@ function Product() {
     axios.get('https://fakestoreapi.com/products')
       .then((res) => {
         setProducts(res.data);
-        setIsLoading(false); // ✅ use setIsLoading
+        setIsLoading(false); 
       })
       .catch((err) => {
         console.log(err);
-        setIsLoading(false); // ✅ use setIsLoading
+        setIsLoading(false); 
       });
   }, []);
 
