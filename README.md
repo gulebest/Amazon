@@ -80,5 +80,4 @@ npm run preview
 ## License
 ISC
 
----
-If you'd like, I can add badges, a CONTRIBUTING guide, or CI (GitHub Actions) next.
+
